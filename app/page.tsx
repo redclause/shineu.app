@@ -10,6 +10,7 @@ type Campaign = { id:string; title:string; owner:string; budget:string; category
 type Message = { id:string; from:string; to:string; text:string; time:string; unread:boolean }
 type PaymentMethod = { id:string; label:string; type:'Meta Pay'|'Instagram'|'Facebook'|'External link'; handle:string; enabled:boolean }
 type Creator = { id:string; name:string; handle:string; category:string; followers:string; engagement:string; platform:string; bio:string; verified:boolean }
+type Contact = { name:string }
 
 const creators:Creator[] = [
  {id:'u1',name:'Maya Chen',handle:'@mayamakes',category:'Beauty & Lifestyle',followers:'182K',engagement:'6.8%',platform:'Instagram',bio:'Beauty, everyday routines and thoughtful product storytelling.',verified:true},
@@ -45,7 +46,7 @@ function uid(prefix:string){return `${prefix}-${Date.now()}-${Math.random().toSt
 export default function HomePage(){
  const [tab,setTab]=useState<Tab>('Home'),[role,setRole]=useState<Role>('Both'),[search,setSearch]=useState('')
  const [services,setServices]=useState(starterServices),[campaigns,setCampaigns]=useState(starterCampaigns),[messages,setMessages]=useState(starterMessages),[paymentMethods,setPaymentMethods]=useState(starterPayments),[saved,setSaved]=useState<string[]>([])
- const [toast,setToast]=useState(''),[modal,setModal]=useState<'service'|'campaign'|'payment'|'message'|null>(null),[selected,setSelected]=useState<Creator|Service|null>(null),[messageText,setMessageText]=useState('')
+ const [toast,setToast]=useState(''),[modal,setModal]=useState<'service'|'campaign'|'payment'|'message'|null>(null),[selected,setSelected]=useState<Contact|null>(null),[messageText,setMessageText]=useState('')
  const [serviceForm,setServiceForm]=useState({title:'',category:'Sponsored content',price:'',unit:'per post',platform:'Instagram',description:''})
  const [campaignForm,setCampaignForm]=useState({title:'',budget:'',category:'Lifestyle',platform:'Instagram',deadline:'',brief:''})
  const [paymentForm,setPaymentForm]=useState({label:'',type:'Instagram',handle:''})
@@ -56,11 +57,12 @@ export default function HomePage(){
  const filteredServices=useMemo(()=>services.filter(x=>`${x.owner} ${x.title} ${x.category} ${x.platform}`.toLowerCase().includes(search.toLowerCase())),[services,search])
  const filteredCampaigns=useMemo(()=>campaigns.filter(x=>`${x.title} ${x.owner} ${x.category} ${x.platform}`.toLowerCase().includes(search.toLowerCase())),[campaigns,search])
  const toggleSave=(id:string)=>setSaved(x=>x.includes(id)?x.filter(v=>v!==id):[...x,id])
- const openMessage=(person:string)=>{setSelected({id:'contact',name:person,handle:'',category:'',followers:'',engagement:'',platform:'',bio:'',verified:false});setMessageText('');setModal('message')}
+ const openMessage=(person:string)=>{setSelected({name:person});setMessageText('');setModal('message')}
  const sendMessage=()=>{if(!messageText.trim()||!selected)return;setMessages(x=>[{id:uid('m'),from:'You',to:selected.name,text:messageText.trim(),time:'Just now',unread:false},...x]);setMessageText('');setModal(null);notify(`Message sent to ${selected.name}`)}
  const createService=()=>{if(!serviceForm.title.trim())return notify('Add a service title');const item:Service={id:uid('s'),owner:'You',title:serviceForm.title.trim(),category:serviceForm.category,price:Number(serviceForm.price)||0,unit:serviceForm.unit,platform:serviceForm.platform,description:serviceForm.description||'Creator service available for collaboration.'};setServices(x=>[item,...x]);setServiceForm({title:'',category:'Sponsored content',price:'',unit:'per post',platform:'Instagram',description:''});setModal(null);notify('Service published')}
  const createCampaign=()=>{if(!campaignForm.title.trim())return notify('Add a campaign title');const item:Campaign={id:uid('c'),title:campaignForm.title.trim(),owner:'You',budget:campaignForm.budget||'Open budget',category:campaignForm.category,platform:campaignForm.platform,status:'Open',deadline:campaignForm.deadline||'Flexible',brief:campaignForm.brief||'Campaign details available after contact.',applicants:0};setCampaigns(x=>[item,...x]);setCampaignForm({title:'',budget:'',category:'Lifestyle',platform:'Instagram',deadline:'',brief:''});setModal(null);notify('Free campaign published')}
  const addPayment=()=>{if(!paymentForm.handle.trim())return notify('Add your Meta or payment handle');const item:PaymentMethod={id:uid('pm'),label:paymentForm.label||`${paymentForm.type} payment`,type:paymentForm.type as PaymentMethod['type'],handle:paymentForm.handle.trim(),enabled:true};setPaymentMethods(x=>[item,...x]);setPaymentForm({label:'',type:'Instagram',handle:''});setModal(null);notify('Payment method added')}
+ useEffect(()=>{const close=()=>setModal(null);window.addEventListener('shineu-close-modal',close);return()=>window.removeEventListener('shineu-close-modal',close)},[])
  return <div className="shineu-shell">
   <header className="main-header"><button className="logo" onClick={()=>setTab('Home')}><span>S</span><strong>ShineU</strong></button><nav className="main-nav">{(['Home','Discover','Services','Campaigns','Messages','Planner','Payments'] as Tab[]).map(x=><button key={x} className={tab===x?'active':''} onClick={()=>setTab(x)}>{x}{x==='Messages'&&messages.some(m=>m.unread)&&<i/>}</button>)}</nav><div className="header-right"><label className="header-search"><Search size={16}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search creators, services…"/></label><button className="round-btn" onClick={()=>notify('You have 1 new collaboration update')}><Bell size={17}/></button><button className="profile-chip" onClick={()=>setTab('Profile')}><span>GE</span><b>Gio</b></button></div></header>
   <main className="main-wrap">
