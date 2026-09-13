@@ -28,7 +28,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["msi"],
+    "targets": ["nsis"],
     "category": "SocialNetworking",
     "shortDescription": "Creator and advertiser collaboration planner",
     "longDescription": "ShineU is a free planner and collaboration workspace for creators, influencers, advertisers, agencies and brands.",
