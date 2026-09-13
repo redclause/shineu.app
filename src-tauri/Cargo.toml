@@ -1,0 +1,16 @@
+[package]
+name = "shineu"
+version = "0.3.0"
+description = "ShineU creator and advertiser collaboration planner"
+authors = ["RedClause"]
+edition = "2021"
+
+[lib]
+name = "shineu_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
