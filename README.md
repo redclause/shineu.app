@@ -2,7 +2,7 @@
 
 ShineU is a **free creator collaboration and influence marketing planner** for influencers, creators, advertisers, agencies and small brands.
 
-The core idea is simple: **discover people, publish services, create campaigns, contact each other, and organize the work.** ShineU is not a payment processor and does not require users to install an `.exe` file.
+The core idea is simple: **discover people, publish services, create campaigns, contact each other, and organize the work.** ShineU is not a payment processor. The primary experience is web-based, with an optional Windows desktop MSI for users who prefer an installed app.
 
 ## Core product
 
@@ -17,6 +17,7 @@ The core idea is simple: **discover people, publish services, create campaigns, 
 - Payment-route profiles for Meta/Instagram/Facebook or external payment links
 - Local browser persistence for the current product layer
 - Responsive desktop and mobile web interface
+- Optional Windows desktop application packaged as an MSI
 
 ## How collaboration works
 
@@ -34,11 +35,13 @@ ShineU can display a user's chosen payment route, including an Instagram/Faceboo
 
 ## Architecture
 
-ShineU is intentionally **web-first**. It uses Next.js and React and can run locally with Node.js. There is no Tauri shell, desktop installer requirement or mandatory Vercel deployment.
+ShineU uses **Next.js + React** as the web application and **Tauri 2** as an optional lightweight Windows desktop shell. The web application can run independently in a browser, while the desktop build packages the same product into a native Windows application.
 
-The application is designed so that an optional cloud backend can be introduced later for account synchronization, real-time messaging, social OAuth/API connections, file storage, notifications and multi-device workspaces.
+The Windows package currently targets **MSI only**. Tauri's Windows bundler uses WiX for MSI generation, and the official Tauri documentation notes that MSI builds must be produced on Windows. citeturn0search0turn0search1
 
-## Run locally
+The desktop package does not replace the future backend. Authentication, database persistence, real-time messaging and social API integrations will remain application/backend concerns.
+
+## Run locally on the web
 
 ```bash
 npm install
@@ -47,12 +50,37 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-For a production build:
+For a production web build:
 
 ```bash
 npm run build
 npm start
 ```
+
+## Run the desktop app on Windows
+
+Install the Tauri prerequisites first: Microsoft C++ Build Tools and WebView2. MSI creation also requires the Windows VBScript optional feature to be enabled. citeturn0search1
+
+Then run:
+
+```bash
+npm install
+npm run tauri:dev
+```
+
+To create the Windows MSI installer:
+
+```bash
+npm run tauri:build
+```
+
+The MSI is generated under:
+
+```text
+src-tauri/target/release/bundle/msi/
+```
+
+The repository also includes a GitHub Actions workflow that builds the Windows MSI on `windows-latest` and uploads it as a workflow artifact. Tauri officially supports GitHub Actions for Windows application builds. citeturn0search2
 
 ## Current data model
 
@@ -71,7 +99,7 @@ The first product layer persists these records in browser localStorage so the ap
 
 ## Next engineering layers
 
-The next production layers should focus on the product itself rather than packaging:
+The next production layers should focus on the product itself rather than expanding desktop features:
 
 1. Real authentication and public profiles
 2. Database persistence and multi-device sync
@@ -86,7 +114,7 @@ The next production layers should focus on the product itself rather than packag
 
 ## CI
 
-GitHub Actions verifies the Next.js production build on pushes and pull requests targeting `main`.
+GitHub Actions verifies the Next.js production build on pushes and pull requests targeting `main`. A separate Windows workflow builds the MSI installer on Windows and exposes the generated installer as a downloadable workflow artifact.
 
 ## Product direction
 
