@@ -1,32 +1,44 @@
-# ShineU — Influence Marketing OS
+# ShineU — Creator & Advertiser Collaboration Planner
 
-ShineU is a **free, local-first creator and influence marketing application** for desktop and mobile. It is designed as a complete workspace for creator discovery, relationships, campaigns, content approvals, scheduling, payments, analytics and reporting.
+ShineU is a **free creator collaboration and influence marketing planner** for influencers, creators, advertisers, agencies and small brands.
 
-The application itself is **not deployed on Vercel**. The future ShineU marketing/landing website can be hosted separately; the application repository remains focused on the installable product.
+The core idea is simple: **discover people, publish services, create campaigns, contact each other, and organize the work.** ShineU is not a payment processor and does not require users to install an `.exe` file.
 
-## Product modules
+## Core product
 
-- Overview dashboard with campaign performance, attention queue, creator opportunities, campaign progress and creator funnel
-- Creator discovery with search, category filtering, fit scoring, shortlists and creator creation
-- Creator CRM with local records and relationship management
-- Relationship pipeline for discovery, outreach, negotiation, contracting and active relationships
-- Campaign management with budgets, creator counts, progress, revenue and status
-- Content approval workflow with pending, approved and changes-requested states
-- Weekly campaign calendar for deliverables, deadlines, launches and payments
-- Payment tracking with pending, scheduled and paid states
-- Analytics for ROAS, revenue, spend, creator quality and campaign performance
-- Report center with executive snapshots and CSV export
-- Workspace settings and integration configuration surface
-- Responsive desktop/tablet/mobile interface
-- Local-first persistence so core records survive restarts without requiring a hosted database
+- Creator and advertiser profiles
+- Creator discovery and search
+- Public creator services with prices and deliverables
+- Free campaign publishing for advertisers
+- Campaign briefs, budgets, platforms and deadlines
+- Direct collaboration messaging
+- Saved creators and services
+- Collaboration planner
+- Payment-route profiles for Meta/Instagram/Facebook or external payment links
+- Local browser persistence for the current product layer
+- Responsive desktop and mobile web interface
 
-## Application architecture
+## How collaboration works
 
-ShineU uses Next.js/React for the shared interface and **Tauri 2** as the native application shell. Tauri supports Windows, macOS, Linux, Android and iOS from the same application codebase, while keeping the frontend static and locally bundled. The Next.js build is configured with `output: 'export'` and Tauri embeds the generated `out/` directory.
+1. A creator builds a profile and publishes services.
+2. An advertiser searches creators or services.
+3. An advertiser can publish a free campaign with a brief, budget and deadline.
+4. A creator or advertiser contacts the other person through ShineU.
+5. Both sides discuss deliverables, timing and price.
+6. They arrange payment directly through the payment route they choose.
+7. ShineU remains the planning and collaboration layer around the relationship.
 
-The current data layer is intentionally local-first. This keeps ShineU free to use and useful offline. The application does not require Vercel, a hosted API or a mandatory cloud account for its core workflows.
+## Payments
 
-## Run the web interface locally
+ShineU can display a user's chosen payment route, including an Instagram/Facebook/Meta payment profile or an external payment link. **ShineU does not hold funds, store card details, or process payments itself.** Users should only publish public payment information and keep passwords, security codes and financial credentials outside ShineU.
+
+## Architecture
+
+ShineU is intentionally **web-first**. It uses Next.js and React and can run locally with Node.js. There is no Tauri shell, desktop installer requirement or mandatory Vercel deployment.
+
+The application is designed so that an optional cloud backend can be introduced later for account synchronization, real-time messaging, social OAuth/API connections, file storage, notifications and multi-device workspaces.
+
+## Run locally
 
 ```bash
 npm install
@@ -35,62 +47,47 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-## Run the desktop application locally
-
-After installing the Rust/Tauri prerequisites for your operating system:
+For a production build:
 
 ```bash
-npm install
-npm run tauri dev
+npm run build
+npm start
 ```
 
-Create production desktop bundles with:
+## Current data model
 
-```bash
-npm run tauri build
-```
+The application currently models:
 
-Tauri produces platform-specific application bundles/installers from the same repository.
+- creators
+- services
+- campaigns
+- messages
+- saved items
+- payment methods
+- planner items
+- user role: Creator, Advertiser or Both
 
-## Mobile targets
+The first product layer persists these records in browser localStorage so the application remains simple and free to use.
 
-Tauri 2 also supports Android and iOS. The native project directories are generated on a development machine with the Tauri CLI after the required Android SDK or Xcode tooling is installed:
+## Next engineering layers
 
-```bash
-npm run tauri android init
-npm run tauri android dev
-```
+The next production layers should focus on the product itself rather than packaging:
 
-For iOS on macOS:
-
-```bash
-npm run tauri ios init
-npm run tauri ios dev
-```
-
-Mobile signing, store metadata and release credentials should be added only when the first public mobile release is ready.
-
-## Data architecture
-
-The first complete product build intentionally uses local-first browser/app storage. The domain models are explicit entities: creators, campaigns, content, payments, relationships and workspace settings. This gives ShineU a usable foundation without making a cloud account mandatory.
-
-Future optional cloud capabilities can be added without changing the core product model:
-
-1. Optional account synchronization
-2. Encrypted multi-device workspace sync
-3. Optional team/workspace membership and RBAC
-4. Social platform OAuth/API connections
-5. Content/object storage
-6. Email and outreach delivery
-7. Attribution and affiliate conversion ingestion
-8. Audit logs and immutable payment records
-9. Background import/sync/reporting jobs
-10. Automated tests and production observability
+1. Real authentication and public profiles
+2. Database persistence and multi-device sync
+3. Real-time messaging
+4. Campaign applications and invitations
+5. Creator/advertiser matching and filters
+6. Deliverables, milestones and approvals
+7. Calendar and task management
+8. Optional Meta/Instagram/Facebook OAuth integrations
+9. Optional external payment-link integrations
+10. Notifications, moderation, reporting and trust features
 
 ## CI
 
-GitHub Actions verifies the static frontend build and attempts Tauri desktop builds for Windows, macOS and Linux on pushes and pull requests targeting `main`.
+GitHub Actions verifies the Next.js production build on pushes and pull requests targeting `main`.
 
 ## Product direction
 
-ShineU is being built as a **real free application**, not a Vercel-hosted demo. The priority is a reliable, polished, local-first experience first; optional online integrations can be layered on afterward.
+ShineU is being built as a **free, useful marketplace-planner and collaboration network**, not as a payment processor. The product should make it easier for creators and advertisers to find each other and turn a conversation into an organized collaboration.
