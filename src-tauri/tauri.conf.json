@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ShineU",
+  "version": "0.3.0",
+  "identifier": "com.redclause.shineu",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:3000",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../out"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "ShineU — Creator & Advertiser Collaboration Planner",
+        "width": 1440,
+        "height": 920,
+        "minWidth": 1100,
+        "minHeight": 700,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi"],
+    "category": "SocialNetworking",
+    "shortDescription": "Creator and advertiser collaboration planner",
+    "longDescription": "ShineU is a free planner and collaboration workspace for creators, influencers, advertisers, agencies and brands.",
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    }
+  }
+}
