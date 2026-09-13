@@ -2,7 +2,7 @@
 
 ShineU is a **free creator collaboration and influence marketing planner** for influencers, creators, advertisers, agencies and small brands.
 
-The core idea is simple: **discover people, publish services, create campaigns, contact each other, and organize the work.** ShineU is not a payment processor. The primary experience is web-based, with an optional Windows desktop MSI for users who prefer an installed app.
+The core idea is simple: **discover people, publish services, create campaigns, contact each other, and organize the work.** ShineU is not a payment processor. The primary experience is web-based, with an optional Windows desktop `.exe` installer for users who prefer an installed app.
 
 ## Core product
 
@@ -17,7 +17,7 @@ The core idea is simple: **discover people, publish services, create campaigns, 
 - Payment-route profiles for Meta/Instagram/Facebook or external payment links
 - Local browser persistence for the current product layer
 - Responsive desktop and mobile web interface
-- Optional Windows desktop application packaged as an MSI
+- Optional Windows desktop application packaged as a normal `.exe` installer
 
 ## How collaboration works
 
@@ -35,9 +35,13 @@ ShineU can display a user's chosen payment route, including an Instagram/Faceboo
 
 ## Architecture
 
-ShineU uses **Next.js + React** as the web application and **Tauri 2** as an optional lightweight Windows desktop shell. The web application can run independently in a browser, while the desktop build packages the same product into a native Windows application.
+ShineU uses **Next.js + React** for the web application. The optional Windows desktop package uses Tauri 2 internally to package the same application as a Windows executable installer. Users do not need to interact with Tauri directly.
 
-The Windows package currently targets **MSI only**. Tauri's Windows bundler uses WiX for MSI generation, and the official Tauri documentation notes that MSI builds must be produced on Windows. citeturn0search0turn0search1
+The Windows package targets the **NSIS `.exe` installer**. The generated installer is placed under:
+
+```text
+src-tauri/target/release/bundle/nsis/
+```
 
 The desktop package does not replace the future backend. Authentication, database persistence, real-time messaging and social API integrations will remain application/backend concerns.
 
@@ -57,30 +61,38 @@ npm run build
 npm start
 ```
 
-## Run the desktop app on Windows
+## Windows `.exe` installer
 
-Install the Tauri prerequisites first: Microsoft C++ Build Tools and WebView2. MSI creation also requires the Windows VBScript optional feature to be enabled. citeturn0search1
+The normal user-facing deliverable is a Windows setup executable. The repository is configured to build an NSIS installer through GitHub Actions on `windows-latest`.
 
-Then run:
+The build command is:
 
 ```bash
 npm install
-npm run tauri:dev
-```
-
-To create the Windows MSI installer:
-
-```bash
 npm run tauri:build
 ```
 
-The MSI is generated under:
+The resulting installer is generated under:
 
 ```text
-src-tauri/target/release/bundle/msi/
+src-tauri/target/release/bundle/nsis/
 ```
 
-The repository also includes a GitHub Actions workflow that builds the Windows MSI on `windows-latest` and uploads it as a workflow artifact. Tauri officially supports GitHub Actions for Windows application builds. citeturn0search2
+The filename will normally resemble:
+
+```text
+ShineU_0.3.0_x64-setup.exe
+```
+
+The exact filename can vary with the application version and Tauri packaging configuration.
+
+The GitHub Actions workflow uploads the generated `.exe` as the artifact:
+
+```text
+ShineU-Windows-x64-Setup
+```
+
+The end user only needs the resulting `.exe`: download it, double-click it, and install ShineU like a normal Windows desktop application.
 
 ## Current data model
 
@@ -99,7 +111,7 @@ The first product layer persists these records in browser localStorage so the ap
 
 ## Next engineering layers
 
-The next production layers should focus on the product itself rather than expanding desktop features:
+The next production layers should focus on the product itself rather than expanding desktop packaging:
 
 1. Real authentication and public profiles
 2. Database persistence and multi-device sync
@@ -114,7 +126,7 @@ The next production layers should focus on the product itself rather than expand
 
 ## CI
 
-GitHub Actions verifies the Next.js production build on pushes and pull requests targeting `main`. A separate Windows workflow builds the MSI installer on Windows and exposes the generated installer as a downloadable workflow artifact.
+GitHub Actions verifies the Next.js production build on pushes and pull requests targeting `main`. A separate Windows workflow builds the `.exe` installer on `windows-latest` and uploads the generated installer as a downloadable workflow artifact.
 
 ## Product direction
 
