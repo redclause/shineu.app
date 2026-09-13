@@ -1,11 +1,14 @@
 {
   "name": "shineu-app",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build --bundles msi"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -16,5 +19,8 @@
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4"
   }
 }
