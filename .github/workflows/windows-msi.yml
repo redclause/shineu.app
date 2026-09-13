@@ -1,0 +1,38 @@
+name: Windows MSI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build-msi:
+    name: Build ShineU MSI
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build MSI
+        run: npm run tauri:build
+
+      - name: Upload MSI
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShineU-Windows-x64-MSI
+          path: src-tauri/target/release/bundle/msi/*.msi
+          if-no-files-found: error
