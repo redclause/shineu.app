@@ -27,11 +27,15 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["nsis", "msi", "dmg", "app", "deb", "rpm"],
     "category": "Business",
     "shortDescription": "Free creator and influence marketing workspace",
     "longDescription": "ShineU is a free, local-first creator and influence marketing workspace for discovery, relationships, campaigns, content approvals, payments, analytics and reports.",
-    "windows": { "webviewInstallMode": { "type": "downloadBootstrapper" } },
-    "macOS": { "minimumSystemVersion": "11.0" }
+    "windows": {
+      "webviewInstallMode": { "type": "downloadBootstrapper" }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0"
+    }
   }
 }
